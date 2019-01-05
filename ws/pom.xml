@@ -72,10 +72,38 @@
             <version>2.9.8</version>
         </dependency>
 
+        <!-- track https://issues.jboss.org/browse/UNDERTOW-1355 -->
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>
             <version>2.0.16.Final</version>
+        </dependency>
+        <!-- to avoid warns from jre9+, waiting for undertow-core to update it's dependency -->
+        <dependency>
+            <groupId>org.jboss.xnio</groupId>
+            <artifactId>xnio-api</artifactId>
+            <version>3.6.5.Final</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.threads</groupId>
+                    <artifactId>jboss-threads</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- to avoid warns from jre9+, waiting for undertow-core to update it's dependency -->
+        <dependency>
+            <groupId>org.jboss.xnio</groupId>
+            <artifactId>xnio-nio</artifactId>
+            <version>3.6.5.Final</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- to avoid warns from jre9+, waiting for undertow-core to update it's dependency -->
+        <dependency>
+            <groupId>org.jboss.threads</groupId>
+            <artifactId>jboss-threads</artifactId>
+            <version>2.3.2.Final</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
