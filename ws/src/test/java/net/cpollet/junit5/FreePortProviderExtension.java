@@ -26,7 +26,7 @@ public final class FreePortProviderExtension implements BeforeAllCallback {
     }
 
     private void set(Field f, Class destination, Object value) {
-        boolean accessible = f.isAccessible();
+        boolean accessible = f.canAccess(null);
 
         try {
             f.setAccessible(true);

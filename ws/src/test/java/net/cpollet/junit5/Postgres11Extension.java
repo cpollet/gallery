@@ -46,7 +46,7 @@ public final class Postgres11Extension implements BeforeAllCallback, AfterAllCal
     }
 
     private void set(Field f, Class destination, Object value) {
-        boolean accessible = f.isAccessible();
+        boolean accessible = f.canAccess(null);
 
         try {
             f.setAccessible(true);
