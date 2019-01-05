@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 
-public class AESKey {
+public final class AESKey {
     private static final List<Integer> validLengths = ImmutableList.of(128 / 8, 192 / 8, 256 / 8);
     private final byte[] key;
 
