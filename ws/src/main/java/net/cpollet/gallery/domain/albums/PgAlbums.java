@@ -1,10 +1,10 @@
 package net.cpollet.gallery.domain.albums;
 
-import com.google.common.collect.ImmutableMap;
 import net.cpollet.gallery.database.Database;
 import net.cpollet.gallery.domain.albums.exceptions.AlbumNotFoundException;
 
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("squid:S1192") // we want full string for readability
 public final class PgAlbums implements Albums {
@@ -20,7 +20,7 @@ public final class PgAlbums implements Albums {
         final boolean published = false;
 
         Long albumId = database.query("INSERT INTO albums (name, description, published) VALUES (:name, :description, :published) RETURNING id")
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "name", name.toString(),
                         "description", description.toString(),
                         "published", published
@@ -37,7 +37,7 @@ public final class PgAlbums implements Albums {
     public Album findById(long id) {
         return new PgReadableAlbums(database, "SELECT id FROM albums WHERE id=:id")
                 .toQuery()
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "id", id
                 ))
                 .fetch((rs, rowNum) -> new CachedAlbum(new PgAlbum(
@@ -52,7 +52,7 @@ public final class PgAlbums implements Albums {
     public CachedAlbum loadById(long id) {
         return new PgReadableAlbums(database, "SELECT id, name, description, published FROM albums WHERE id=:id")
                 .toQuery()
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "id", id
                 ))
                 .fetch((rs, rowNum) -> new CachedAlbum(

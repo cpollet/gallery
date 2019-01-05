@@ -1,6 +1,5 @@
 package net.cpollet.gallery.domain.albums;
 
-import com.google.common.collect.ImmutableMap;
 import com.twitter.twittertext.Extractor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +9,7 @@ import net.cpollet.gallery.utils.TagExtractor;
 import net.cpollet.gallery.utils.TwitterTagExtractor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("squid:S1192") // we want full string for readability
@@ -39,7 +39,7 @@ public final class PgAlbum implements Album {
     public AlbumName name() {
         return new AlbumName(new PgReadableAlbums(database, "SELECT id, name FROM albums WHERE id=:id")
                 .toQuery()
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "id", id
                 ))
                 .fetch((rs, rowNum) -> rs.getString("name"))
@@ -51,7 +51,7 @@ public final class PgAlbum implements Album {
     @Override
     public Album name(AlbumName name) {
         database.query("UPDATE albums SET name=:name WHERE id=:id") // FIXME implement filter
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "name", name.toString(),
                         "id", id
                 ))
@@ -64,7 +64,7 @@ public final class PgAlbum implements Album {
     public AlbumDescription description() {
         return new AlbumDescription(new PgReadableAlbums(database, "SELECT id, description FROM albums WHERE id=:id")
                 .toQuery()
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "id", id
                 ))
                 .fetch((rs, rowNum) -> rs.getString("description"))
@@ -76,7 +76,7 @@ public final class PgAlbum implements Album {
     @Override
     public Album description(AlbumDescription description) {
         database.query("UPDATE albums SET description=:description WHERE id=:id") // FIXME implement filter
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "description", description.toString(),
                         "id", id
                 ))
@@ -89,7 +89,7 @@ public final class PgAlbum implements Album {
     public boolean published() {
         return Boolean.TRUE.equals(new PgReadableAlbums(database, "SELECT id, published FROM albums WHERE id=:id")
                 .toQuery()
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "id", id
                 ))
                 .fetch((rs, rowNum) -> rs.getBoolean("published"))
@@ -101,7 +101,7 @@ public final class PgAlbum implements Album {
     @Override
     public Album published(boolean published) {
         database.query("UPDATE albums SET published=:published WHERE id=:id") // FIXME implement filter
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "published", published,
                         "id", id
                 ))

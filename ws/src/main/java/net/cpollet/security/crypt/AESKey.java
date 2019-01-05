@@ -1,13 +1,11 @@
 package net.cpollet.security.crypt;
 
-import com.google.common.collect.ImmutableList;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 
 public final class AESKey {
-    private static final List<Integer> validLengths = ImmutableList.of(128 / 8, 192 / 8, 256 / 8);
+    private static final List<Integer> validLengths = List.of(128 / 8, 192 / 8, 256 / 8);
     private final byte[] key;
 
     public AESKey(byte[] key) {

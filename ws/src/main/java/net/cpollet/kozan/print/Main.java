@@ -37,7 +37,7 @@ public final class Main {
         private final Map<String, Object> map;
 
         JsonMedia() {
-            map = ImmutableMap.of();
+            map = Map.of();
         }
 
         private JsonMedia(Map<String, Object> map, String key, Object value) {

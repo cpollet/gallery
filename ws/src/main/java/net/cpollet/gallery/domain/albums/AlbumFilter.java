@@ -1,6 +1,5 @@
 package net.cpollet.gallery.domain.albums;
 
-import com.google.common.collect.ImmutableMap;
 import net.cpollet.gallery.domain.ValidationException;
 
 import java.util.Map;
@@ -9,7 +8,7 @@ import java.util.function.Predicate;
 
 public final class AlbumFilter implements Predicate<Album> {
     private static final String VALIDATION_TARGET = "album/filter";
-    private static final Map<String, BiFunction<Album, String, Boolean>> PREDICATES = ImmutableMap.of(
+    private static final Map<String, BiFunction<Album, String, Boolean>> PREDICATES = Map.of(
             "name.contains", (album, s) -> album.name().toString().contains(s),
             "published", (album, s) -> Boolean.valueOf(s).equals(album.published())
     );

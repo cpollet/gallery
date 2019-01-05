@@ -1,8 +1,9 @@
 package net.cpollet.gallery.domain.logins;
 
-import com.google.common.collect.ImmutableMap;
 import net.cpollet.gallery.database.Database;
 import net.cpollet.gallery.domain.logins.exceptions.LoginNotFoundException;
+
+import java.util.Map;
 
 public final class PgLogin implements Login {
     private final Database database;
@@ -20,7 +21,7 @@ public final class PgLogin implements Login {
 
     private String hashedPassword() {
         return database.query("SELECT password FROM logins WHERE id=:id")
-                .with(ImmutableMap.of(
+                .with(Map.of(
                         "id", id
                 ))
                 .fetch((rs, rowNum) -> rs.getString("password"))
