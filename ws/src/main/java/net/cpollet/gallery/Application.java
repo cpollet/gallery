@@ -3,10 +3,11 @@ package net.cpollet.gallery;
 import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.database.JdbcDatabase;
 import net.cpollet.gallery.domain.gallery.PgGallery;
-import net.cpollet.gallery.rest.auth.AESEncryptedIdSession;
+import net.cpollet.gallery.rest.auth.AESEncryptedIdSessions;
 import net.cpollet.gallery.rest.auth.InMemorySessions;
 import net.cpollet.gallery.rest.undertow.UndertowServer;
 import net.cpollet.liquibase.LiquibaseMigration;
+import net.cpollet.security.crypt.AESKey;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -71,8 +72,8 @@ public final class Application {
                                 new NamedParameterJdbcTemplate(dataSource)
                         )
                 ),
-                new AESEncryptedIdSession(
-                        Base64.getDecoder().decode("c60fogALoeuRGcyxolXCTg=="), // TODO be explicit on key type, like create class AESKey?
+                new AESEncryptedIdSessions(
+                        new AESKey(Base64.getDecoder().decode("c60fogALoeuRGcyxolXCTg==")),
                         new InMemorySessions()
                 ),
                 new TransactionTemplate(

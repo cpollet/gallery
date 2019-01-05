@@ -52,6 +52,7 @@ public final class Main {
             return new JsonMedia(map, key, valueSupplier.get());
         }
 
+        @SuppressWarnings("squid:S00112") // we dont care, this is an example
         @Override
         public String output() {
             try {

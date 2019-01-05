@@ -12,28 +12,27 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public final class AESCiphertext {
-    private final byte[] key;
+    private final AESKey key;
     private final byte[] text;
     private final Lazy<AESCleartext> result;
 
-    public AESCiphertext(byte[] text, byte[] key) {
+    public AESCiphertext(byte[] text, AESKey key) {
         this.key = key;
         this.text = text;
         this.result = new Lazy<>(this::performDecryption);
     }
 
-    @SuppressWarnings("squid:S00112")
     private AESCleartext performDecryption() {
         try {
             ByteBuffer byteBuffer = ByteBuffer.wrap(text);
             return new AESCleartext(
                     decryptionCipher(
                             iv(byteBuffer),
-                            key
+                            key.toBytes()
                     ).doFinal(cipherText(byteBuffer))
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SecurityException(e);
         }
     }
 
@@ -67,7 +66,7 @@ public final class AESCiphertext {
         return text;
     }
 
-    public byte[] key() {
+    public AESKey key() {
         return key;
     }
 }

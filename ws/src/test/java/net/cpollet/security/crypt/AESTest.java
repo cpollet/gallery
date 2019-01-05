@@ -32,7 +32,7 @@ class AESTest {
     @Test
     void decryptEncryptedWithKey_returnsSameText() {
         // GIVEN
-        byte[] key = new AESCleartext.KeySupplier().get();
+        AESKey key = new AESKey();
         AESCleartext clearText = new AESCleartext("some text".getBytes(), key);
 
         // WHEN

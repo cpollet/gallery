@@ -11,42 +11,35 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.function.Supplier;
 
 public final class AESCleartext {
     private final byte[] text;
-    private final Supplier<byte[]> keySupplier;
+    private final AESKey key;
     private final Lazy<AESCiphertext> result;
 
-    private AESCleartext(byte[] text, Supplier<byte[]> keySupplier) {
+    public AESCleartext(byte[] text, AESKey key) {
         this.text = text;
-        this.keySupplier = keySupplier;
+        this.key = key;
         this.result = new Lazy<>(this::performEncryption);
     }
 
     public AESCleartext(byte[] text) {
-        this(text, new KeySupplier());
+        this(text, new AESKey());
     }
 
-    public AESCleartext(byte[] text, byte[] key) {
-        this(text, () -> key);
-    }
-
-    @SuppressWarnings("squid:S00112")
     private AESCiphertext performEncryption() {
         try {
-            byte[] key = keySupplier.get();
             byte[] iv = iv();
             return new AESCiphertext(
                     concat(
                             iv,
-                            encryptionCipher(iv, key).doFinal(text)
+                            encryptionCipher(iv, key.toBytes()).doFinal(text)
                     )
                     ,
                     key
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SecurityException(e);
         }
     }
 
@@ -76,19 +69,5 @@ public final class AESCleartext {
 
     public byte[] clearText() {
         return text;
-    }
-
-    public static class KeySupplier implements Supplier<byte[]> {
-        @SuppressWarnings("squid:S00112")
-        @Override
-        public byte[] get() {
-            try {
-                byte[] key = new byte[16];
-                SecureRandom.getInstanceStrong().nextBytes(key);
-                return key;
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 }

@@ -2,37 +2,38 @@ package net.cpollet.gallery.rest.auth;
 
 import net.cpollet.security.crypt.AESCiphertext;
 import net.cpollet.security.crypt.AESCleartext;
+import net.cpollet.security.crypt.AESKey;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.function.Function;
 
-public final class AESEncryptedIdSession implements Sessions {
+public final class AESEncryptedIdSessions implements Sessions {
     private final Sessions wrapped;
     private final Function<String, String> encryptionAlgorithm;
     private final Function<String, String> decryptionAlgorithm;
 
-    public AESEncryptedIdSession(byte[] encryptionKey, Sessions wrapped) {
+    public AESEncryptedIdSessions(AESKey key, Sessions wrapped) {
         this.wrapped = wrapped;
-        this.encryptionAlgorithm = encryptionAlgorithm(encryptionKey);
-        this.decryptionAlgorithm = decryptionAlgorithm(encryptionKey);
+        this.encryptionAlgorithm = encryptionAlgorithm(key);
+        this.decryptionAlgorithm = decryptionAlgorithm(key);
     }
 
-    private Function<String, String> encryptionAlgorithm(byte[] sessionIdEncryptionKey) {
+    private Function<String, String> encryptionAlgorithm(AESKey key) {
         return s -> Base64.getEncoder().encodeToString(
                 new AESCleartext(
                         s.getBytes(StandardCharsets.UTF_8),
-                        sessionIdEncryptionKey
+                        key
                 ).encrypt().cipherText()
         );
     }
 
-    private Function<String, String> decryptionAlgorithm(byte[] sessionIdEncryptionKey) {
+    private Function<String, String> decryptionAlgorithm(AESKey key) {
         return s -> new String(
                 new AESCiphertext(
                         Base64.getDecoder().decode(s.getBytes(StandardCharsets.UTF_8)),
-                        sessionIdEncryptionKey
+                        key
                 ).clearText().clearText(),
                 StandardCharsets.UTF_8
         );
