@@ -50,8 +50,19 @@ public final class Application {
     public Application start() {
         DataSource dataSource = new DriverManagerDataSource(databaseConnectionString, databaseUsername, databasePassword);
 
-        new LiquibaseMigration(dataSource).execute();
+        migrateDatabase(dataSource);
+        startHttpServer(dataSource);
 
+        log.info(applicationReadyMessage);
+
+        return this;
+    }
+
+    private void migrateDatabase(DataSource dataSource) {
+        new LiquibaseMigration(dataSource).execute();
+    }
+
+    private void startHttpServer(DataSource dataSource) {
         UndertowServer httpServer = new UndertowServer(
                 httpHost,
                 httpPort,
@@ -79,10 +90,6 @@ public final class Application {
         }));
 
         httpServer.listen();
-
-        log.info(applicationReadyMessage);
-
-        return this;
     }
 
     public String httpEndpoint() {
