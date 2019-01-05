@@ -10,7 +10,7 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>gallery-ws</artifactId>
+    <artifactId>ws</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -33,6 +33,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>1.72</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.twitter.twittertext</groupId>
             <artifactId>twitter-text</artifactId>
             <version>3.0.1</version>
@@ -54,11 +60,10 @@
             <version>3.6.2</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>27.0-jre</version>
+            <version>27.0.1-jre</version>
         </dependency>
 
         <dependency>
@@ -169,46 +174,65 @@
                         </goals>
                     </execution>
                 </executions>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.28.0</version>
+                <configuration>
+                    <logDate>default</logDate>
+                    <autoPull>true</autoPull>
+                    <images>
+                        <image>
+                            <name>cpollet/${project.groupId}-${project.artifactId}</name>
+                            <alias>gallery-ws</alias>
+                            <build>
+                                <tags combine.children="append">
+                                    <tag>latest</tag>
+                                    <tag>${project.version}</tag>
+                                </tags>
+                                <from>openjdk:11-jre-slim</from>
+                                <!--<from>openjdk:8-jre-alpine</from>-->
+                                <assembly>
+                                    <descriptor>${project.basedir}/docker-assembly.xml</descriptor>
+                                </assembly>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                                <entryPoint>
+                                    java $JAVA_OPTS -jar /maven/webservice.jar $OPTS
+                                </entryPoint>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
             </plugin>
-            <!--<plugin>-->
-            <!--<groupId>io.fabric8</groupId>-->
-            <!--<artifactId>docker-maven-plugin</artifactId>-->
-            <!--<version>0.28.0</version>-->
-            <!--<configuration>-->
-            <!--<logDate>default</logDate>-->
-            <!--<autoPull>true</autoPull>-->
-            <!--<images>-->
-            <!--<image>-->
-            <!--<name>cpollet/${project.groupId}-${project.artifactId}</name>-->
-            <!--<alias>gallery-ws</alias>-->
-            <!--<build>-->
-            <!--<tags combine.children="append">-->
-            <!--<tag>latest</tag>-->
-            <!--<tag>${project.version}</tag>-->
-            <!--</tags>-->
-            <!--<from>openjdk:8-jre-alpine</from>-->
-            <!--<assembly>-->
-            <!--<descriptor>${project.basedir}/docker-assembly.xml</descriptor>-->
-            <!--</assembly>-->
-            <!--<ports>-->
-            <!--<port>8080</port>-->
-            <!--</ports>-->
-            <!--<entryPoint>-->
-            <!--java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /maven/webservice.jar-->
-            <!--</entryPoint>-->
-            <!--</build>-->
-            <!--</image>-->
-            <!--</images>-->
-            <!--</configuration>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<goals>-->
-            <!--<goal>build</goal>-->
-            <!--</goals>-->
-            <!--<phase>package</phase>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>build-docker-image</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

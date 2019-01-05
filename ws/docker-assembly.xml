@@ -6,7 +6,7 @@
         <dependencySet>
             <useProjectArtifact>true</useProjectArtifact>
             <includes>
-                <include>net.cpollet.gallery:gallery-ws</include>
+                <include>net.cpollet.gallery:ws</include>
             </includes>
             <outputDirectory>.</outputDirectory>
             <outputFileNameMapping>webservice.jar</outputFileNameMapping>

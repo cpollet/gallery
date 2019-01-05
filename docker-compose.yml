@@ -1,0 +1,26 @@
+version: '2'
+services:
+  postgres:
+    image: "postgres:11"
+    ports:
+      - "14321:5432"
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=password"
+      - "POSTGRES_DB=gallery"
+    volumes:
+      - "ws_pg_data:/var/lib/postgresql/data"
+
+  webservice:
+    image: "cpollet/net.cpollet.gallery-ws"
+    ports:
+      - "15005:5005"
+      - "18080:8080"
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 --illegal-access=warn"
+      - "OPTS=-database.host=postgres"
+    depends_on:
+      - "postgres"
+
+volumes:
+  ws_pg_data:
