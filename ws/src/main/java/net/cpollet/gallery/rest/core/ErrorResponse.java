@@ -1,11 +1,8 @@
 package net.cpollet.gallery.rest.core;
 
-import lombok.Getter;
-
 import java.util.Collections;
 import java.util.List;
 
-@Getter
 public final class ErrorResponse {
     private final int httpStatus;
     private final String message;
@@ -29,5 +26,25 @@ public final class ErrorResponse {
                 correlationId,
                 Collections.emptyList()
         );
+    }
+
+    public int getHttpStatus() {
+        return httpStatus;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public List<String> getDetails() {
+        return details;
     }
 }

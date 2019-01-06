@@ -23,7 +23,6 @@ import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Headers;
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.domain.gallery.Gallery;
 import net.cpollet.gallery.rest.actions.albums.CreateAlbum;
 import net.cpollet.gallery.rest.actions.albums.ListAlbums;
@@ -44,6 +43,8 @@ import net.cpollet.gallery.rest.undertow.handlers.CookiesHandler;
 import net.cpollet.gallery.rest.undertow.handlers.CorrelationIdHandler;
 import net.cpollet.gallery.rest.undertow.handlers.SerializeHandler;
 import net.cpollet.kozan.lazy.Lazy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -51,8 +52,9 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@Slf4j
 public final class UndertowServer {
+    private static final Logger log = LoggerFactory.getLogger(UndertowServer.class);
+
     public static final AttachmentKey<Response> RESPONSE = AttachmentKey.create(Response.class);
     private static final AttachmentKey<String> REQUEST_PAYLOAD = AttachmentKey.create(String.class);
 

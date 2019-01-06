@@ -1,16 +1,18 @@
 package net.cpollet.junit5;
 
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.docker.Postgres11Container;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-@Slf4j
 public final class Postgres11Extension implements BeforeAllCallback, AfterAllCallback {
+    private static final Logger log = LoggerFactory.getLogger(Postgres11Extension.class);
+
     private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(
             "net", "cpollet", "junit5", "Postgres11Extension"
     );

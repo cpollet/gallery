@@ -1,14 +1,17 @@
 package net.cpollet.gallery.domain.albums;
 
-import lombok.RequiredArgsConstructor;
 import net.cpollet.gallery.domain.albums.events.AlbumEventsListener;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 public final class ObservableAlbum implements Album {
     private final Album album;
     private final AlbumEventsListener eventListener;
+
+    public ObservableAlbum(Album album, AlbumEventsListener eventListener) {
+        this.album = album;
+        this.eventListener = eventListener;
+    }
 
     @Override
     public long id() {

@@ -10,5 +10,6 @@
 
     <modules>
         <module>ws</module>
+        <module>ws-jlink</module>
     </modules>
 </project>

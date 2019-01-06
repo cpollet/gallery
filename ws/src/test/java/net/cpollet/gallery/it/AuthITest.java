@@ -2,7 +2,6 @@ package net.cpollet.gallery.it;
 
 import com.google.common.collect.ImmutableMap;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.Application;
 import net.cpollet.gallery.domain.logins.Password;
 import net.cpollet.gallery.it.domain.Albums;
@@ -19,7 +18,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-@Slf4j
 @Postgres11
 @UnirestMapperConfiguration
 @FreePortProvider

@@ -7,12 +7,14 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
-@Slf4j
 public final class LiquibaseMigration {
+    private static final Logger log = LoggerFactory.getLogger(LiquibaseMigration.class);
+
     private final DataSource dataSource;
     private final String migrationFile;
 

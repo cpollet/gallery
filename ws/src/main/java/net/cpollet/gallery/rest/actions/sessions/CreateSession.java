@@ -1,7 +1,5 @@
 package net.cpollet.gallery.rest.actions.sessions;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.cpollet.gallery.codec.Deserializer;
 import net.cpollet.gallery.codec.JacksonSerialization;
 import net.cpollet.gallery.codec.SerializationException;
@@ -123,11 +121,25 @@ public final class CreateSession implements Action {
             ).collect(Collectors.toList());
         }
 
-        @Getter
-        @Setter
         private static class PayloadSpec {
             private String username;
             private char[] password;
+
+            public String getUsername() {
+                return username;
+            }
+
+            public void setUsername(String username) {
+                this.username = username;
+            }
+
+            public char[] getPassword() {
+                return password;
+            }
+
+            public void setPassword(char[] password) {
+                this.password = password;
+            }
         }
     }
 }

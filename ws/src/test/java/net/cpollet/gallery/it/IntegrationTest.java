@@ -1,6 +1,5 @@
 package net.cpollet.gallery.it;
 
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.junit5.FreePortProvider;
 import net.cpollet.junit5.Postgres11;
 import net.cpollet.junit5.UnirestMapperConfiguration;

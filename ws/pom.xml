@@ -79,7 +79,7 @@
             <artifactId>undertow-core</artifactId>
             <version>2.0.16.Final</version>
         </dependency>
-        <!-- to avoid warns from jre9+, waiting for undertow-core to update it's dependency -->
+        <!-- to avoid warns from java 9+, waiting for undertow-core to update it's dependency -->
         <dependency>
             <groupId>org.jboss.xnio</groupId>
             <artifactId>xnio-api</artifactId>
@@ -92,14 +92,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- to avoid warns from jre9+, waiting for undertow-core to update it's dependency -->
+        <!-- to avoid warns from java 9+, waiting for undertow-core to update it's dependency -->
         <dependency>
             <groupId>org.jboss.xnio</groupId>
             <artifactId>xnio-nio</artifactId>
             <version>3.6.5.Final</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- to avoid warns from jre9+, waiting for undertow-core to update it's dependency -->
+        <!-- to avoid warns from java 9+, waiting for undertow-core to update it's dependency -->
         <dependency>
             <groupId>org.jboss.threads</groupId>
             <artifactId>jboss-threads</artifactId>
@@ -129,13 +129,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.3.2</version>
@@ -150,22 +143,64 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
+            <artifactId>mockito-core</artifactId>
+            <version>2.23.4</version>
             <scope>test</scope>
         </dependency>
 
+        <!--
+        still causes
+        [WARNING] Can't extract module name from junixsocket-native-common-2.0.4.jar: junixsocket.native.common: Invalid module name: 'native' is not a Java identifier
+        [WARNING] Can't extract module name from native-lib-loader-2.0.2.jar: native.lib.loader: Invalid module name: 'native' is not a Java identifier
+        -->
         <dependency>
             <groupId>com.github.docker-java</groupId>
             <artifactId>docker-java</artifactId>
             <version>3.0.14</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport-native-unix-common</artifactId>
+                </exclusion>
+                <!-- to fix an issue in docker-java with java 9+ modules -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport-native-epoll</artifactId>
+                </exclusion>
+                <!-- to fix an issue in docker-java with java 9+ modules -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport-native-kqueue</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        <!-- to fix an issue in docker-java with jre9+ -->
+        <!-- to fix an issue in docker-java with java 9+ modules -->
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
             <version>1.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- to fix an issue in docker-java with java 9+ modules -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-unix-common</artifactId>
+            <version>4.1.32.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- to fix an issue in docker-java with java 9+ modules -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <version>4.1.32.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- to fix an issue in docker-java with java 9+ modules -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-kqueue</artifactId>
+            <version>4.1.32.Final</version>
             <scope>test</scope>
         </dependency>
 
@@ -197,6 +232,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
                 <configuration>
+                    <forkCount>0</forkCount><!-- otherwise, issue with modules -->
+                    <useSystemClassLoader>false</useSystemClassLoader><!-- prevents a warning with forkCount = 0 -->
                     <excludes>
                         <exclude>*ITest</exclude>
                     </excludes>
@@ -219,28 +256,28 @@
                     </includes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.cpollet.gallery.Main</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-shade-plugin</artifactId>-->
+                <!--<version>3.2.1</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>shade</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<createDependencyReducedPom>false</createDependencyReducedPom>-->
+                            <!--<transformers>-->
+                                <!--<transformer-->
+                                        <!--implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+                                    <!--<mainClass>net.cpollet.gallery.Main</mainClass>-->
+                                <!--</transformer>-->
+                            <!--</transformers>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>

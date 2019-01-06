@@ -1,8 +1,5 @@
 package net.cpollet.gallery.rest.actions.albums;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.codec.Deserializer;
 import net.cpollet.gallery.codec.JacksonSerialization;
 import net.cpollet.gallery.codec.SerializationException;
@@ -22,6 +19,8 @@ import net.cpollet.gallery.rest.core.ActionUrlTemplate;
 import net.cpollet.gallery.rest.core.Response;
 import net.cpollet.kozan.lazy.Lazy;
 import net.cpollet.kozan.maybe.Maybe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +28,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 public final class CreateAlbum implements Action {
+    private final Logger log = LoggerFactory.getLogger(CreateAlbum.class);
+
     private final Gallery gallery;
     private final Payload payload;
     private final ActionUrlTemplate albumUrlTemplate;
@@ -134,11 +134,25 @@ public final class CreateAlbum implements Action {
             ).collect(Collectors.toList());
         }
 
-        @Getter
-        @Setter
         private static class PayloadSpec {
             private String name;
             private String description;
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getDescription() {
+                return description;
+            }
+
+            public void setDescription(String description) {
+                this.description = description;
+            }
         }
     }
 }

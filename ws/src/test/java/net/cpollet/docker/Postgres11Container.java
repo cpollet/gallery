@@ -5,8 +5,9 @@ import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.model.PullResponseItem;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.PullImageResultCallback;
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.kozan.lazy.Lazy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,8 +17,9 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-@Slf4j
 public final class Postgres11Container implements Container {
+    private static final Logger log = LoggerFactory.getLogger(Postgres11Container.class);
+
     private static final String IMAGE_NAME = "postgres:11";
     private final String databaseName;
     private final String username;

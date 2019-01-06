@@ -1,21 +1,21 @@
 package net.cpollet.gallery.domain.albums;
 
 import com.twitter.twittertext.Extractor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.database.Database;
 import net.cpollet.gallery.domain.albums.exceptions.AlbumNotFoundException;
 import net.cpollet.gallery.utils.TagExtractor;
 import net.cpollet.gallery.utils.TwitterTagExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("squid:S1192") // we want full string for readability
-@ToString
-@Slf4j
 public final class PgAlbum implements Album {
+    private static final Logger log = LoggerFactory.getLogger(PgAlbum.class);
+
     private final Database database;
     private final TagExtractor tagExtractor;
     private final long id;
@@ -125,8 +125,6 @@ public final class PgAlbum implements Album {
         }
         throw new IllegalArgumentException("Cannot unwrap to " + clazz.getName());
     }
-
-
 }
 
 

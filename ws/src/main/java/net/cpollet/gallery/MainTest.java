@@ -2,7 +2,6 @@ package net.cpollet.gallery;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.database.JdbcDatabase;
 import net.cpollet.gallery.domain.albums.Album;
 import net.cpollet.gallery.domain.albums.AlbumDescription;
@@ -18,6 +17,8 @@ import net.cpollet.gallery.domain.gallery.Gallery;
 import net.cpollet.gallery.domain.gallery.PgGallery;
 import net.cpollet.gallery.rest.api.response.RestAlbum;
 import net.cpollet.liquibase.LiquibaseMigration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -28,8 +29,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
 public final class MainTest {
+    private final static Logger log = LoggerFactory.getLogger(MainTest.class);
+
     public static void main(String[] args) throws JsonProcessingException {
         DataSource dataSource = new DriverManagerDataSource("jdbc:postgresql://localhost:5432/gallery", "postgres", "password");
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

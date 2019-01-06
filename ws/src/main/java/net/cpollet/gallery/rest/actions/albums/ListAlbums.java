@@ -1,6 +1,5 @@
 package net.cpollet.gallery.rest.actions.albums;
 
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.domain.ValidationException;
 import net.cpollet.gallery.domain.albums.Album;
 import net.cpollet.gallery.domain.albums.AlbumComparator;
@@ -18,6 +17,8 @@ import net.cpollet.gallery.rest.core.Response;
 import net.cpollet.kozan.collections.HeadAndTail;
 import net.cpollet.kozan.lazy.Lazy;
 import net.cpollet.kozan.maybe.Maybe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Deque;
@@ -26,8 +27,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 public final class ListAlbums implements Action {
+    private static final Logger log = LoggerFactory.getLogger(ListAlbums.class);
+
     private final Gallery gallery;
     private final Payload payload;
     private final ActionUrlTemplate albumUrlTemplate;

@@ -1,6 +1,5 @@
 package net.cpollet.gallery;
 
-import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.database.JdbcDatabase;
 import net.cpollet.gallery.domain.gallery.PgGallery;
 import net.cpollet.gallery.rest.auth.AESEncryptedIdSessions;
@@ -8,6 +7,8 @@ import net.cpollet.gallery.rest.auth.InMemorySessions;
 import net.cpollet.gallery.rest.undertow.UndertowServer;
 import net.cpollet.liquibase.LiquibaseMigration;
 import net.cpollet.security.crypt.AESKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -16,8 +17,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 import java.util.Base64;
 
-@Slf4j
 public final class Application {
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
+
     private final String databaseConnectionString;
     private final String databaseUsername;
     private final String databasePassword;

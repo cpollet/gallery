@@ -1,14 +1,16 @@
 package net.cpollet.gallery.domain.tags;
 
-import lombok.RequiredArgsConstructor;
 import net.cpollet.gallery.database.Database;
 
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public final class PgTags implements Tags {
     private final Database database;
+
+    public PgTags(Database database) {
+        this.database = database;
+    }
 
     @Override
     public void tagsOnAlbum(Long id, List<String> tags) {

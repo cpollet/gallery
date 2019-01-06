@@ -1,12 +1,14 @@
 package net.cpollet.kozan.generator;
 
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
-@Slf4j
 public final class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws InterruptedException {
         Generator<Integer> randomIntegerGenerator = new RandomIntegerGenerator(0, 10);
         for (int i = 0; i < 10; i++) {

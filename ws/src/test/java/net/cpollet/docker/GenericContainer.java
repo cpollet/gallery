@@ -2,10 +2,12 @@ package net.cpollet.docker;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.ExposedPort;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 class GenericContainer implements Container {
+    private static final Logger log = LoggerFactory.getLogger(GenericContainer.class);
+
     private final String id;
     private final DockerClient dockerClient;
     private final String containerName;

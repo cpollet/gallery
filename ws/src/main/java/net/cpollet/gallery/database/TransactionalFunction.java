@@ -1,13 +1,15 @@
 package net.cpollet.gallery.database;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
 import java.util.function.Function;
 
-@Slf4j
 public final class TransactionalFunction<T, R> implements Function<T, R> {
+    private static final Logger log = LoggerFactory.getLogger(TransactionalFunction.class);
+
     private final TransactionTemplate transactionTemplate;
     private final Function<T, R> wrapped;
 

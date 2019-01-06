@@ -1,15 +1,17 @@
 package net.cpollet.gallery.domain.albums.events;
 
-import lombok.RequiredArgsConstructor;
 import net.cpollet.gallery.domain.albums.Album;
 import net.cpollet.gallery.domain.albums.AlbumDescription;
 import net.cpollet.gallery.domain.albums.AlbumName;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 public final class AlbumEventsListenerChain implements AlbumEventsListener {
     private final List<AlbumEventsListener> listeners;
+
+    public AlbumEventsListenerChain(List<AlbumEventsListener> listeners) {
+        this.listeners = listeners;
+    }
 
     @Override
     public void nameUpdated(Album album, AlbumName oldName) {

@@ -3,7 +3,8 @@ package net.cpollet.docker;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -11,8 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-@Slf4j
 class LogReadinessCheck implements ReadinessCheck {
+    private static final Logger log = LoggerFactory.getLogger(LogReadinessCheck.class);
+
     private final List<String> needles;
 
     LogReadinessCheck(List<String> needles) {
