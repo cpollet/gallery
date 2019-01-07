@@ -12,7 +12,7 @@ public interface Query {
 
     <T> List<T> fetch(Class<T> targetType);
 
-    <T> List<T> fetch(RowMapper<T> rowMapper); // TODO replace with local interface
+    <T> List<T> fetch(RowMapper<T> rowMapper); // FIXME replace with local interface
 
     void execute();
 }

@@ -1,5 +1,5 @@
 package net.cpollet.gallery.database;
 
-public interface FilteredQuery { // TODO merge with Query?
+public interface FilteredQuery { // FIXME merge with Query?
     Query toQuery();
 }

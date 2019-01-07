@@ -39,7 +39,7 @@ public final class AlbumFilter implements Predicate<Album> {
         return filter.test(album);
     }
 
-    public static class Spec { // TODO move that to Payload deserialization
+    public static class Spec { // FIXME move that to Payload deserialization
         private static final String VALIDATION_REGEX = "^[^:]+:[^:]+$";
         private static final String SPLIT_REGEX = ":";
         private final String spec;
