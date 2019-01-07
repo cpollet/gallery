@@ -25,20 +25,18 @@ import io.undertow.util.AttachmentKey;
 import io.undertow.util.Headers;
 import lombok.extern.slf4j.Slf4j;
 import net.cpollet.gallery.domain.gallery.Gallery;
-import net.cpollet.gallery.rest.actions.albums.CreateAlbum;
-import net.cpollet.gallery.rest.actions.albums.ListAlbums;
-import net.cpollet.gallery.rest.actions.albums.ReadAlbum;
-import net.cpollet.gallery.rest.actions.sessions.CreateSession;
 import net.cpollet.gallery.rest.auth.Sessions;
 import net.cpollet.gallery.rest.core.Action;
 import net.cpollet.gallery.rest.core.ActionException;
 import net.cpollet.gallery.rest.core.ErrorResponse;
 import net.cpollet.gallery.rest.core.Response;
-import net.cpollet.gallery.rest.core.TransactionalAction;
-import net.cpollet.gallery.rest.core.ValidatePayload;
 import net.cpollet.gallery.rest.undertow.auth.FailingIdentityManager;
 import net.cpollet.gallery.rest.undertow.auth.UndertowUsernamePasswordSessions;
-import net.cpollet.gallery.rest.undertow.core.HttpHeaderActionUrlTemplate;
+import net.cpollet.gallery.rest.undertow.core.ValidateEndpoints;
+import net.cpollet.gallery.rest.undertow.endpoints.CreateAlbumEndpoint;
+import net.cpollet.gallery.rest.undertow.endpoints.CreateSessionEndpoint;
+import net.cpollet.gallery.rest.undertow.endpoints.GetAlbumEndpoint;
+import net.cpollet.gallery.rest.undertow.endpoints.GetAlbumsEndpoint;
 import net.cpollet.gallery.rest.undertow.handlers.BaseUrlHandler;
 import net.cpollet.gallery.rest.undertow.handlers.CookiesHandler;
 import net.cpollet.gallery.rest.undertow.handlers.CorrelationIdHandler;
@@ -46,15 +44,11 @@ import net.cpollet.gallery.rest.undertow.handlers.SerializeHandler;
 import net.cpollet.kozan.lazy.Lazy;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.Arrays;
 
 @Slf4j
 public final class UndertowServer {
     public static final AttachmentKey<Response> RESPONSE = AttachmentKey.create(Response.class);
-    private static final AttachmentKey<String> REQUEST_PAYLOAD = AttachmentKey.create(String.class);
 
     private static final String APPLICATION_JSON = "application/json";
 
@@ -223,6 +217,13 @@ public final class UndertowServer {
                 );
     }
 
+    private void handle(HttpServerExchange exchange, Action action) {
+        exchange.putAttachment(
+                RESPONSE,
+                action.execute()
+        );
+    }
+
     private HttpHandler filterFormat(HttpHandler wrapped) {
         return filterAccept(
                 filterContentType(
@@ -259,7 +260,30 @@ public final class UndertowServer {
     }
 
     private RoutingHandler route(UndertowUsernamePasswordSessions usernamePasswordSessions, Gallery gallery, TransactionTemplate transactionTemplate) {
-        return new RoutingHandler()
+        var handler = new ValidateEndpoints(
+                configureErrorEndpoints(new RoutingHandler())
+                        .setInvalidMethodHandler(exchange -> {
+                            throw ActionException.METHOD_NOT_ALLOWED;
+                        })
+                        .setFallbackHandler(exchange -> {
+                            throw ActionException.NOT_FOUND;
+                        })
+
+        );
+
+        Arrays.asList(
+                new CreateSessionEndpoint(transactionTemplate, usernamePasswordSessions, RESPONSE),
+                new GetAlbumsEndpoint(transactionTemplate, gallery, RESPONSE),
+                new CreateAlbumEndpoint(transactionTemplate, gallery, RESPONSE),
+                new GetAlbumEndpoint(transactionTemplate, gallery, RESPONSE)
+        ).forEach(e -> e.register(handler));
+
+        return handler.handler();
+    }
+
+    // eventually remove this method
+    private RoutingHandler configureErrorEndpoints(RoutingHandler handler) {
+        return handler
                 .get("/500", e -> {
                     throw new Exception("error");
                 })
@@ -267,82 +291,6 @@ public final class UndertowServer {
                     throw new ActionException("message", "0400", 400);
                 })
                 .get("/204", e -> {
-                })
-                .post("/sessions", e -> handleWithPayload(e,
-                        new TransactionalAction(transactionTemplate, action(() -> {
-                            CreateSession.SerializedPayload payload = new CreateSession.SerializedPayload(() -> e.getAttachment(REQUEST_PAYLOAD));
-                            return new ValidatePayload(
-                                    new CreateSession(
-                                            usernamePasswordSessions,
-                                            new UndertowUsernamePasswordSessions.UndertowNotifier(e.getSecurityContext()),
-                                            payload,
-                                            new HttpHeaderActionUrlTemplate(e, "/sessions/%s")
-                                    ),
-                                    payload
-                            );
-                        })))
-                )
-                .get("/albums", e -> handle(e,
-                        new TransactionalAction(transactionTemplate, action(() -> {
-                            ListAlbums.SerializedPayload payload = new ListAlbums.SerializedPayload(
-                                    Optional.ofNullable(e.getQueryParameters().get("sort"))
-                                            .orElse(new LinkedList<>()),
-                                    Optional.ofNullable(e.getQueryParameters().get("filter"))
-                                            .orElse(new LinkedList<>())
-                            );
-                            return new ValidatePayload(
-                                    new ListAlbums(
-                                            gallery,
-                                            payload,
-                                            new HttpHeaderActionUrlTemplate(e, "/albums/%s")
-                                    ),
-                                    payload
-                            );
-                        }))))
-                .post("/albums", e -> handleWithPayload(e,
-                        new TransactionalAction(transactionTemplate, action(() -> {
-                            CreateAlbum.SerializedPayload payload = new CreateAlbum.SerializedPayload(() -> e.getAttachment(REQUEST_PAYLOAD));
-                            return new ValidatePayload(
-                                    new CreateAlbum(
-                                            gallery,
-                                            payload,
-                                            new HttpHeaderActionUrlTemplate(e, "/albums/%s")
-                                    ),
-                                    payload);
-                        })))
-                )
-                .get("/albums/{id}", e -> handle(e,
-                        new TransactionalAction(transactionTemplate,
-                                new ReadAlbum(
-                                        gallery,
-                                        new ReadAlbum.SerializedPayload(e.getQueryParameters().get("id").getFirst()),
-                                        new HttpHeaderActionUrlTemplate(e, "/albums/%s")
-                                )
-                        )
-                ))
-                .setInvalidMethodHandler(exchange -> {
-                    throw ActionException.METHOD_NOT_ALLOWED;
-                })
-                .setFallbackHandler(exchange -> {
-                    throw ActionException.NOT_FOUND;
                 });
-    }
-
-    private void handleWithPayload(HttpServerExchange exchange, Action action) {
-        exchange.getRequestReceiver().receiveFullBytes((exchange2, data) -> {
-            exchange2.putAttachment(REQUEST_PAYLOAD, new String(data, 0, data.length, StandardCharsets.UTF_8));
-            handle(exchange2, action);
-        });
-    }
-
-    private Action action(Supplier<Action> supplier) {
-        return supplier.get();
-    }
-
-    private void handle(HttpServerExchange exchange, Action action) {
-        exchange.putAttachment(
-                RESPONSE,
-                action.execute()
-        );
     }
 }
