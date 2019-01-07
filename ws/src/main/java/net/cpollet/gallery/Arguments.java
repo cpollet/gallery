@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Parameters(separators = "=")
-public class Arguments {
+final class Arguments {
     @Parameter(names = {"-database.host"}, description = "Hostname of database")
     private String databaseHost = "localhost";
 

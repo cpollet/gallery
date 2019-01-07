@@ -1,15 +1,14 @@
 package net.cpollet.gallery;
 
-import com.beust.jcommander.JCommander;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class Main {
     public static void main(String[] args) {
-        Arguments arguments = arguments(args);
+        CommandLine commandLine = new CommandLine(args);
 
         Application application = new Application(
-                String.format("jdbc:postgresql://%s:5432/gallery", arguments.getDatabaseHost()),
+                String.format("jdbc:postgresql://%s:5432/gallery", commandLine.databaseHost()),
                 "postgres",
                 "password",
                 8080,
@@ -17,14 +16,5 @@ public final class Main {
         );
 
         application.start();
-    }
-
-    private static Arguments arguments(String[] args) {
-        Arguments arguments = new Arguments();
-        JCommander.newBuilder()
-                .addObject(arguments)
-                .build()
-                .parse(args);
-        return arguments;
     }
 }
